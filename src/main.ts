@@ -10,6 +10,7 @@ async function run() {
   let owner = core.getInput('owner', { required: false }) || context.repo.owner;
   let repo = core.getInput('repo', { required: false}) || context.repo.repo;
   const base = core.getInput('base', { required: false });
+  const parent = core.getInput('parent', { required: false });
   const head = core.getInput('head', { required: false });
   const mergeMethod = core.getInput('merge_method', { required: false });
   const prTitle = core.getInput('pr_title', { required: false });
@@ -39,7 +40,7 @@ async function run() {
   }
 
   try {
-    let pr = await octokit.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, title: prTitle, head: owner + ':' + head, base: base, body: prMessage, maintainer_can_modify: false });
+    let pr = await octokit.pulls.create({ owner: context.repo.owner, repo: context.repo.repo, title: prTitle, head: parent + ':' + head, base: base, body: prMessage, maintainer_can_modify: false });
     await delay(20);
     if (autoApprove) {
         await octokit.pulls.createReview({ owner: context.repo.owner, repo: context.repo.repo, pull_number: pr.data.number, event: "COMMENT", body: "Auto approved" });
